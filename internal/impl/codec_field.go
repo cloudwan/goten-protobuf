@@ -328,11 +328,11 @@ func makeProtoStringerFieldCoder(ft reflect.Type) pointerCoderFuncs {
 			if reflect.ValueOf(ps).IsNil() {
 				return 0
 			}
-			v, err := ps.ProtoString()
+			s, err := ps.ProtoStringSize()
 			if err != nil {
 				panic(err)
 			}
-			return f.tagsize + protowire.SizeBytes(len(v))
+			return f.tagsize + protowire.SizeBytes(s)
 		},
 		marshal: func(b []byte, p pointer, f *coderFieldInfo, opts marshalOptions) ([]byte, error) {
 			ps := p.AsValueOf(ft).Elem().Interface().(pref.ProtoStringer)
@@ -712,11 +712,11 @@ func makeProtoStringerSliceFieldCoder(ft reflect.Type) pointerCoderFuncs {
 		size: func(p pointer, f *coderFieldInfo, opts marshalOptions) int {
 			n := 0
 			for _, v := range p.PointerSlice() {
-				v, err := v.AsValueOf(ft.Elem()).Interface().(pref.ProtoStringer).ProtoString()
+				s, err := v.AsValueOf(ft.Elem()).Interface().(pref.ProtoStringer).ProtoStringSize()
 				if err != nil {
 					panic(err)
 				}
-				n += f.tagsize + protowire.SizeBytes(len(v))
+				n += f.tagsize + protowire.SizeBytes(s)
 			}
 			return n
 		},
