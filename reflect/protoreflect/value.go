@@ -294,4 +294,7 @@ type ProtoStringer interface {
 
 	// ParseProtoString sets value of struct from string
 	ParseProtoString(string) error
+
+	// ProtoStringSize returns size of the value if converted to string format
+	ProtoStringSize() (int, error)
 }
