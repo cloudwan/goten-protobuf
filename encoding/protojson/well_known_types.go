@@ -846,14 +846,7 @@ func (e encoder) marshalFieldMask(m pref.Message) error {
 
 	for i := 0; i < list.Len(); i++ {
 		s := list.Get(i).String()
-		if !pref.FullName(s).IsValid() {
-			return errors.New("%s contains invalid path: %q", genid.FieldMask_Paths_field_fullname, s)
-		}
-		// Return error if conversion to camelCase is not reversible.
 		cc := strs.JSONCamelCase(s)
-		if s != strs.JSONSnakeCase(cc) {
-			return errors.New("%s contains irreversible value %q", genid.FieldMask_Paths_field_fullname, s)
-		}
 		paths = append(paths, cc)
 	}
 
@@ -880,9 +873,6 @@ func (d decoder) unmarshalFieldMask(m pref.Message) error {
 
 	for _, s0 := range paths {
 		s := strs.JSONSnakeCase(s0)
-		if strings.Contains(s0, "_") || !pref.FullName(s).IsValid() {
-			return d.newError(tok.Pos(), "%v contains invalid path: %q", genid.FieldMask_Paths_field_fullname, s0)
-		}
 		list.Append(pref.ValueOfString(s))
 	}
 	return nil
